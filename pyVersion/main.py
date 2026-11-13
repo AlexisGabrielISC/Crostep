@@ -1,6 +1,9 @@
 import flet as ft
 import json
 
+# ==========================================
+# MODELOS DE DATOS (Lógica de Crochet)
+# ==========================================
 
 class InstruccionPunto:
     def __init__(self, tipo_punto: str, cantidad: int = 1):
@@ -22,6 +25,7 @@ class InstruccionPunto:
 
 
 class GrupoRepeticion:
+    """Representa patrones dentro de patrones (ej: [1 pb, 1 aum] x 6)"""
     def __init__(self, repeticiones: int = 1):
         self.repeticiones = int(repeticiones)
         self.elementos = []  # Lista de InstruccionPunto
@@ -81,7 +85,11 @@ class Pieza:
             v.numero = i + 1
 
 
-def main(page: ft.Page):
+# ==========================================
+# INTERFAZ GRÁFICA (FLET)
+# ==========================================
+
+def main_app(page: ft.Page):
     page.title = "Crostep - Diseñador de Patrones"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.scroll = ft.ScrollMode.AUTO
@@ -387,4 +395,4 @@ def main(page: ft.Page):
         ])
     )
 
-ft.app(target=main)
+ft.app(target=main_app)

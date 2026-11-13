@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crostep - Diseñador de Patrones</title>
+
+  <!-- ==========================================
+       ESTILOS CSS (Neomorfismo Pastel y Relieve)
+       ========================================== -->
+  <style>
+    :root {
+      /* Paleta Pastel Suave */
+      --bg-base: #eef1f8;
+      --bg-card: #eef1f8;
+      --accent-lilac: #9d7cd8;
+      --accent-lilac-dark: #7e5bef;
+      --accent-mint: #6ec4a7;
+      --accent-peach: #f29f8f;
+      --accent-danger: #e57373;
+      --text-main: #4a4e69;
+      --text-muted: #7f849c;
+
+      /* Sombras Neomórficas (Relieve Elevado y Sumido) */
+      --shadow-out: 8px 8px 16px #d1d6e3, -8px -8px 16px #ffffff;
+      --shadow-out-sm: 4px 4px 8px #d1d6e3, -4px -4px 8px #ffffff;
+      --shadow-in: inset 5px 5px 10px #d1d6e3, inset -5px -5px 10px #ffffff;
+      --shadow-in-sm: inset 3px 3px 6px #d1d6e3, inset -3px -3px 6px #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 780px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Encabezado */
+    .header-bar {
+      background: linear-gradient(135deg, #b89ce6, #9d7cd8);
+      color: #ffffff;
+      padding: 20px 26px;
+      border-radius: 22px;
+      box-shadow: var(--shadow-out);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header-bar h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .header-badge {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Tarjetas Principales (Relieve Elevado) */
+    .neo-card {
+      background-color: var(--bg-card);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow-out);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent-lilac-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Inputs y Selects (Relieve Sumido / Interno) */
+    .neo-input,
+    .neo-select {
+      background-color: var(--bg-base);
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-in);
+      transition: box-shadow 0.2s ease;
+      width: 100%;
+    }
+
+    .neo-input:focus,
+    .neo-select:focus {
+      box-shadow: inset 6px 6px 12px #c7cddb, inset -6px -6px 12px #ffffff, 0 0 0 2px rgba(157, 124, 216, 0.35);
+    }
+
+    .neo-input-sm,
+    .neo-select-sm {
+      padding: 8px 12px;
+      border-radius: 11px;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-in-sm);
+    }
+
+    /* Controles Numeric Stepper */
+    .stepper-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .stepper-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stepper-input {
+      width: 68px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    /* Botones Neomórficos */
+    .neo-btn {
+      background-color: var(--bg-base);
+      border: none;
+      border-radius: 14px;
+      padding: 11px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: var(--shadow-out-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .neo-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .neo-btn:active {
+      box-shadow: var(--shadow-in-sm);
+      transform: translateY(1px);
+    }
+
+    .neo-btn-circle {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 1.15rem;
+      color: var(--accent-lilac-dark);
+    }
+
+    .neo-btn-primary {
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+      color: #ffffff;
+      box-shadow: 5px 5px 12px #c8cfe0, -5px -5px 12px #ffffff;
+    }
+
+    .neo-btn-primary:active {
+      box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.25);
+    }
+
+    .neo-btn-mint {
+      color: #2f8568;
+    }
+
+    .neo-btn-danger {
+      color: var(--accent-danger);
+      padding: 8px 10px;
+    }
+
+    /* Contenedor Sumido para Sub-elementos del Grupo Temporal */
+    .well-container {
+      background-color: #e6eaf4;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-in);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 58px;
+    }
+
+    .empty-hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-style: italic;
+      padding: 6px 0;
+    }
+
+    .sub-item-row {
+      display: grid;
+      grid-template-columns: 1fr 75px auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Vista Previa de Vueltas */
+    .vueltas-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .vuelta-card {
+      background-color: var(--bg-base);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-out-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-left: 5px solid var(--accent-lilac);
+    }
+
+    .vuelta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vuelta-badge {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--accent-lilac-dark);
+    }
+
+    .pts-pill {
+      background-color: #e4def7;
+      color: #5b3fa3;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      margin-left: 8px;
+      box-shadow: var(--shadow-in-sm);
+    }
+
+    /* Caja interna para grupos repetidos dentro de una vuelta */
+    .grupo-box {
+      background-color: #e7ebf5;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow-in-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .grupo-box-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .inst-simple-row {
+      display: grid;
+      grid-template-columns: 1fr 75px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Barra inferior Exportar / Importar */
+    .actions-footer {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .actions-footer .neo-btn {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    /* Notificación Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #4a4e69;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: all 0.25s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       CONTENIDO HTML
+       ========================================== -->
+  <div class="app-container">
+    <!-- Encabezado -->
+    <header class="header-bar">
+      <h1>🧶 Crostep — Diseñador de Patrones</h1>
+      <span class="header-badge" id="badge-total-vueltas">0 Vueltas</span>
+    </header>
+
+    <!-- Sección Nombre de la Pieza -->
+    <section class="neo-card">
+      <div class="section-title" id="lbl-pieza-titulo">Pieza: Cuerpo Principal</div>
+      <input
+        type="text"
+        id="txt-nombre-pieza"
+        class="neo-input"
+        value="Cuerpo Principal"
+        placeholder="Nombre de la pieza (ej. Cabeza, Brazo izquierdo...)"
+      />
+    </section>
+
+    <!-- Sección Constructor de Pasos y Grupos Anidados -->
+    <section class="neo-card">
+      <div class="section-title">1. Constructor de Pasos y Grupos Anidados</div>
+
+      <div>
+        <label for="dd-tipo-punto" class="stepper-label" style="display:block; margin-bottom:8px;">
+          Tipo de Punto Principal
+        </label>
+        <select id="dd-tipo-punto" class="neo-select"></select>
+      </div>
+
+      <!-- Stepper Cantidad -->
+      <div class="stepper-row">
+        <span class="stepper-label">Cantidad del punto:</span>
+        <div class="stepper-controls">
+          <button type="button" class="neo-btn neo-btn-circle" id="btn-dec-cant">−</button>
+          <input type="number" id="txt-cantidad" class="neo-input stepper-input" value="1" min="1" />
+          <button type="button" class="neo-btn neo-btn-circle" id="btn-inc-cant">+</button>
+        </div>
+      </div>
+
+      <button type="button" class="neo-btn neo-btn-mint" id="btn-add-sub">
+        ＋ Añadir paso al grupo actual
+      </button>
+
+      <!-- Contenedor sumido de pasos anidados -->
+      <div class="well-container" id="col-elementos-grupo">
+        <div class="empty-hint">No hay pasos extra en el grupo. Si agregas pasos aquí, se agruparán con el punto principal.</div>
+      </div>
+
+      <!-- Stepper Repeticiones -->
+      <div class="stepper-row">
+        <span class="stepper-label">Repeticiones del grupo (x N):</span>
+        <div class="stepper-controls">
+          <button type="button" class="neo-btn neo-btn-circle" id="btn-dec-rep">−</button>
+          <input type="number" id="txt-repeticiones" class="neo-input stepper-input" value="1" min="1" />
+          <button type="button" class="neo-btn neo-btn-circle" id="btn-inc-rep">+</button>
+        </div>
+      </div>
+
+      <button type="button" class="neo-btn neo-btn-primary" id="btn-guardar-vuelta">
+        Guardar Vuelta Completa
+      </button>
+    </section>
+
+    <!-- Sección Vista Previa y Edición Directa -->
+    <section class="neo-card">
+      <div class="section-title">2. Vista Previa y Edición Directa del Patrón</div>
+      <div class="vueltas-list" id="col-patron-vista">
+        <div class="empty-hint">Aún no has agregado vueltas a esta pieza.</div>
+      </div>
+    </section>
+
+    <!-- Exportar / Importar JSON -->
+    <footer class="actions-footer">
+      <button type="button" class="neo-btn" id="btn-exportar">💾 Exportar (Guardar JSON)</button>
+      <button type="button" class="neo-btn" id="btn-importar">📂 Importar (Abrir JSON)</button>
+      <input type="file" id="file-input-json" accept=".json" style="display: none;" />
+    </footer>
+  </div>
+
+  <!-- Notificación flotante -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ==========================================
+       LÓGICA JAVASCRIPT (Modelos y Controladores)
+       ========================================== -->
+  <script>
+    // ------------------------------------------
+    // MODELOS DE DATOS (Lógica de Crochet)
+    // ------------------------------------------
+    class InstruccionPunto {
+      constructor(tipoPunto, cantidad = 1) {
+        this.tipo_punto = tipoPunto;
+        this.cantidad = parseInt(cantidad, 10) || 1;
+      }
+
+      calcularPuntosTotales() {
+        if (this.tipo_punto.includes("Aumento") || this.tipo_punto.includes("Doble")) {
+          return this.cantidad * 2;
+        } else if (this.tipo_punto.includes("Disminución")) {
+          return this.cantidad * 1;
+        }
+        return this.cantidad;
+      }
+
+      toDict() {
+        return {
+          tipo_punto: this.tipo_punto,
+          cantidad: this.cantidad
+        };
+      }
+    }
+
+    class GrupoRepeticion {
+      constructor(repeticiones = 1) {
+        this.repeticiones = parseInt(repeticiones, 10) || 1;
+        this.elementos = [];
+      }
+
+      agregarElemento(elemento) {
+        this.elementos.push(elemento);
+      }
+
+      calcularPuntosTotales() {
+        const subtotal = this.elementos.reduce((acc, el) => acc + el.calcularPuntosTotales(), 0);
+        return subtotal * this.repeticiones;
+      }
+
+      toDict() {
+        return {
+          repeticiones: this.repeticiones,
+          elementos: this.elementos.map(el => el.toDict())
+        };
+      }
+    }
+
+    class Vuelta {
+      constructor(numero) {
+        this.numero = numero;
+        this.instrucciones = [];
+      }
+
+      agregarInstruccion(inst) {
+        this.instrucciones.push(inst);
+      }
+
+      totalPuntos() {
+        return this.instrucciones.reduce((acc, inst) => acc + inst.calcularPuntosTotales(), 0);
+      }
+
+      toDict() {
+        return {
+          numero: this.numero,
+          instrucciones: this.instrucciones.map(inst => inst.toDict())
+        };
+      }
+    }
+
+    class Pieza {
+      constructor(nombre) {
+        this.nombre = nombre;
+        this.vueltas = [];
+        this.marcadores = [];
+      }
+
+      agregarVuelta(vuelta) {
+        this.vueltas.push(vuelta);
+      }
+
+      eliminarVuelta(index) {
+        this.vueltas.splice(index, 1);
+        this.vueltas.forEach((v, i) => {
+          v.numero = i + 1;
+        });
+      }
+    }
+
+    // ------------------------------------------
+    // ESTADO DE LA APLICACIÓN
+    // ------------------------------------------
+    const TIPOS_PUNTOS = [
+      "Punto Bajo (pb)",
+      "Punto Medio Alto (pma)",
+      "Punto Alto (pa)",
+      "Punto Doble Bajo",
+      "Punto Doble Medio",
+      "Punto Doble Alto",
+      "Anillo Mágico (am)",
+      "Aumento (aum)",
+      "Disminución (dism)"
+    ];
+
+    const piezaActual = new Pieza("Cuerpo Principal");
+    let grupoTemporalElementos = [];
+
+    // ------------------------------------------
+    // REFERENCIAS DEL DOM
+    // ------------------------------------------
+    const lblPiezaTitulo = document.getElementById("lbl-pieza-titulo");
+    const txtNombrePieza = document.getElementById("txt-nombre-pieza");
+    const ddTipoPunto = document.getElementById("dd-tipo-punto");
+    const txtCantidad = document.getElementById("txt-cantidad");
+    const txtRepeticiones = document.getElementById("txt-repeticiones");
+    const colElementosGrupo = document.getElementById("col-elementos-grupo");
+    const colPatronVista = document.getElementById("col-patron-vista");
+    const badgeTotalVueltas = document.getElementById("badge-total-vueltas");
+    const toastEl = document.getElementById("toast");
+
+    // ------------------------------------------
+    // UTILIDADES UI
+    // ------------------------------------------
+    function mostrarToast(mensaje) {
+      toastEl.textContent = mensaje;
+      toastEl.classList.add("show");
+      setTimeout(() => toastEl.classList.remove("show"), 3000);
+    }
+
+    function crearSelectPuntos(valorSeleccionado, claseExtra = "") {
+      const select = document.createElement("select");
+      select.className = `neo-select ${claseExtra}`.trim();
+      TIPOS_PUNTOS.forEach(pt => {
+        const opt = document.createElement("option");
+        opt.value = pt;
+        opt.textContent = pt;
+        if (pt === valorSeleccionado) opt.selected = true;
+        select.appendChild(opt);
+      });
+      return select;
+    }
+
+    function configurarStepper(inputEl, btnDec, btnInc, minVal = 1) {
+      btnDec.addEventListener("click", () => {
+        const val = parseInt(inputEl.value, 10) || minVal;
+        if (val > minVal) inputEl.value = val - 1;
+      });
+      btnInc.addEventListener("click", () => {
+        const val = parseInt(inputEl.value, 10) || minVal;
+        inputEl.value = val + 1;
+      });
+      inputEl.addEventListener("blur", () => {
+        const val = parseInt(inputEl.value, 10);
+        inputEl.value = (!isNaN(val) && val >= minVal) ? val : minVal;
+      });
+    }
+
+    // ------------------------------------------
+    // RENDERIZADO DE VISTAS
+    // ------------------------------------------
+    function actualizarVistaGrupo() {
+      colElementosGrupo.innerHTML = "";
+
+      if (grupoTemporalElementos.length === 0) {
+        colElementosGrupo.innerHTML = `<div class="empty-hint">No hay pasos extra en el grupo. Si agregas pasos aquí, se agruparán con el punto principal.</div>`;
+        return;
+      }
+
+      grupoTemporalElementos.forEach((el, idx) => {
+        const row = document.createElement("div");
+        row.className = "sub-item-row";
+
+        const ddSub = crearSelectPuntos(el.tipo_punto, "neo-select-sm");
+        ddSub.addEventListener("change", (e) => {
+          grupoTemporalElementos[idx].tipo_punto = e.target.value;
+        });
+
+        const txtSubCant = document.createElement("input");
+        txtSubCant.type = "number";
+        txtSubCant.min = "1";
+        txtSubCant.value = el.cantidad;
+        txtSubCant.className = "neo-input neo-input-sm";
+        txtSubCant.addEventListener("blur", (e) => {
+          const val = parseInt(e.target.value, 10);
+          if (!isNaN(val) && val > 0) {
+            grupoTemporalElementos[idx].cantidad = val;
+          } else {
+            e.target.value = grupoTemporalElementos[idx].cantidad;
+          }
+        });
+
+        const btnDel = document.createElement("button");
+        btnDel.type = "button";
+        btnDel.className = "neo-btn neo-btn-danger";
+        btnDel.title = "Eliminar paso";
+        btnDel.textContent = "🗑";
+        btnDel.addEventListener("click", () => {
+          grupoTemporalElementos.splice(idx, 1);
+          actualizarVistaGrupo();
+        });
+
+        row.append(ddSub, txtSubCant, btnDel);
+        colElementosGrupo.appendChild(row);
+      });
+    }
+
+    function actualizarVistaPatron() {
+      colPatronVista.innerHTML = "";
+      badgeTotalVueltas.textContent = `${piezaActual.vueltas.length} Vuelta${piezaActual.vueltas.length === 1 ? "" : "s"}`;
+
+      if (piezaActual.vueltas.length === 0) {
+        colPatronVista.innerHTML = `<div class="empty-hint">Aún no has agregado vueltas a esta pieza.</div>`;
+        return;
+      }
+
+      piezaActual.vueltas.forEach((v, vIndex) => {
+        const card = document.createElement("div");
+        card.className = "vuelta-card";
+
+        // Cabecera de la vuelta
+        const header = document.createElement("div");
+        header.className = "vuelta-header";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "vuelta-badge";
+        titleSpan.innerHTML = `Vuelta ${v.numero} <span class="pts-pill">${v.totalPuntos()} pts</span>`;
+
+        const btnDelVuelta = document.createElement("button");
+        btnDelVuelta.type = "button";
+        btnDelVuelta.className = "neo-btn neo-btn-danger";
+        btnDelVuelta.title = "Eliminar vuelta";
+        btnDelVuelta.textContent = "🗑";
+        btnDelVuelta.addEventListener("click", () => {
+          piezaActual.eliminarVuelta(vIndex);
+          actualizarVistaPatron();
+        });
+
+        header.append(titleSpan, btnDelVuelta);
+        card.appendChild(header);
+
+        // Instrucciones dentro de la vuelta
+        v.instrucciones.forEach((inst, instIdx) => {
+          if (inst instanceof GrupoRepeticion) {
+            const grupoBox = document.createElement("div");
+            grupoBox.className = "grupo-box";
+
+            const gHeader = document.createElement("div");
+            gHeader.className = "grupo-box-header";
+            gHeader.innerHTML = `<span>Grupo Repetido:</span> <span>x</span>`;
+
+            const txtRepG = document.createElement("input");
+            txtRepG.type = "number";
+            txtRepG.min = "1";
+            txtRepG.value = inst.repeticiones;
+            txtRepG.className = "neo-input neo-input-sm";
+            txtRepG.style.width = "68px";
+            txtRepG.addEventListener("blur", (e) => {
+              const val = parseInt(e.target.value, 10);
+              if (!isNaN(val) && val > 0) {
+                piezaActual.vueltas[vIndex].instrucciones[instIdx].repeticiones = val;
+                actualizarVistaPatron();
+              } else {
+                e.target.value = inst.repeticiones;
+              }
+            });
+
+            gHeader.appendChild(txtRepG);
+            grupoBox.appendChild(gHeader);
+
+            inst.elementos.forEach((elem, subIdx) => {
+              const subRow = document.createElement("div");
+              subRow.className = "inst-simple-row";
+
+              const ddElemTipo = crearSelectPuntos(elem.tipo_punto, "neo-select-sm");
+              ddElemTipo.addEventListener("change", (e) => {
+                piezaActual.vueltas[vIndex].instrucciones[instIdx].elementos[subIdx].tipo_punto = e.target.value;
+                actualizarVistaPatron();
+              });
+
+              const txtElemCant = document.createElement("input");
+              txtElemCant.type = "number";
+              txtElemCant.min = "1";
+              txtElemCant.value = elem.cantidad;
+              txtElemCant.className = "neo-input neo-input-sm";
+              txtElemCant.addEventListener("blur", (e) => {
+                const val = parseInt(e.target.value, 10);
+                if (!isNaN(val) && val > 0) {
+                  piezaActual.vueltas[vIndex].instrucciones[instIdx].elementos[subIdx].cantidad = val;
+                  actualizarVistaPatron();
+                } else {
+                  e.target.value = elem.cantidad;
+                }
+              });
+
+              subRow.append(ddElemTipo, txtElemCant);
+              grupoBox.appendChild(subRow);
+            });
+
+            card.appendChild(grupoBox);
+          } else {
+            const simpleRow = document.createElement("div");
+            simpleRow.className = "inst-simple-row";
+
+            const ddT = crearSelectPuntos(inst.tipo_punto, "neo-select-sm");
+            ddT.addEventListener("change", (e) => {
+              piezaActual.vueltas[vIndex].instrucciones[instIdx].tipo_punto = e.target.value;
+              actualizarVistaPatron();
+            });
+
+            const txtC = document.createElement("input");
+            txtC.type = "number";
+            txtC.min = "1";
+            txtC.value = inst.cantidad;
+            txtC.className = "neo-input neo-input-sm";
+            txtC.addEventListener("blur", (e) => {
+              const val = parseInt(e.target.value, 10);
+              if (!isNaN(val) && val > 0) {
+                piezaActual.vueltas[vIndex].instrucciones[instIdx].cantidad = val;
+                actualizarVistaPatron();
+              } else {
+                e.target.value = inst.cantidad;
+              }
+            });
+
+            simpleRow.append(ddT, txtC);
+            card.appendChild(simpleRow);
+          }
+        });
+
+        colPatronVista.appendChild(card);
+      });
+    }
+
+    // ------------------------------------------
+    // INICIALIZACIÓN Y EVENTOS
+    // ------------------------------------------
+    // Poblar selector principal
+    TIPOS_PUNTOS.forEach(pt => {
+      const opt = document.createElement("option");
+      opt.value = pt;
+      opt.textContent = pt;
+      ddTipoPunto.appendChild(opt);
+    });
+
+    // Cambiar nombre de la pieza
+    txtNombrePieza.addEventListener("input", () => {
+      piezaActual.nombre = txtNombrePieza.value || "Sin nombre";
+      lblPiezaTitulo.textContent = `Pieza: ${piezaActual.nombre}`;
+    });
+
+    // Configurar steppers
+    configurarStepper(txtCantidad, document.getElementById("btn-dec-cant"), document.getElementById("btn-inc-cant"), 1);
+    configurarStepper(txtRepeticiones, document.getElementById("btn-dec-rep"), document.getElementById("btn-inc-rep"), 1);
+
+    // Añadir paso al grupo temporal
+    document.getElementById("btn-add-sub").addEventListener("click", () => {
+      const cant = parseInt(txtCantidad.value, 10) || 1;
+      grupoTemporalElementos.push(new InstruccionPunto(ddTipoPunto.value, cant));
+      actualizarVistaGrupo();
+    });
+
+    // Guardar vuelta completa
+    document.getElementById("btn-guardar-vuelta").addEventListener("click", () => {
+      const nuevaV = new Vuelta(piezaActual.vueltas.length + 1);
+      const rep = parseInt(txtRepeticiones.value, 10) || 1;
+      const cantPrincipal = parseInt(txtCantidad.value, 10) || 1;
+
+      if (grupoTemporalElementos.length > 0) {
+        const grupo = new GrupoRepeticion(rep);
+        const puntoPrincipal = new InstruccionPunto(ddTipoPunto.value, cantPrincipal);
+        grupo.agregarElemento(puntoPrincipal);
+        grupoTemporalElementos.forEach(el => grupo.agregarElemento(el));
+
+        nuevaV.agregarInstruccion(grupo);
+        grupoTemporalElementos = [];
+        actualizarVistaGrupo();
+      } else if (rep > 1) {
+        // Si el usuario indicó repeticiones > 1 sin sub-pasos, también se envuelve como grupo repetido
+        const grupo = new GrupoRepeticion(rep);
+        grupo.agregarElemento(new InstruccionPunto(ddTipoPunto.value, cantPrincipal));
+        nuevaV.agregarInstruccion(grupo);
+      } else {
+        nuevaV.agregarInstruccion(new InstruccionPunto(ddTipoPunto.value, cantPrincipal));
+      }
+
+      piezaActual.agregarVuelta(nuevaV);
+      actualizarVistaPatron();
+      mostrarToast(`Vuelta ${nuevaV.numero} agregada`);
+    });
+
+    // Exportar JSON
+    document.getElementById("btn-exportar").addEventListener("click", () => {
+      const datos = {
+        pieza: piezaActual.nombre,
+        marcadores: piezaActual.marcadores,
+        vueltas: piezaActual.vueltas.map(v => v.toDict())
+      };
+
+      const blob = new Blob([JSON.stringify(datos, null, 4)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${piezaActual.nombre.toLowerCase().replace(/\s+/g, "_") || "patron_crochet"}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      mostrarToast("Patrón exportado en JSON");
+    });
+
+    // Importar JSON
+    const fileInputJson = document.getElementById("file-input-json");
+    document.getElementById("btn-importar").addEventListener("click", () => {
+      fileInputJson.click();
+    });
+
+    fileInputJson.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const datos = JSON.parse(event.target.result);
+          piezaActual.nombre = datos.pieza || "Sin nombre";
+          txtNombrePieza.value = piezaActual.nombre;
+          lblPiezaTitulo.textContent = `Pieza: ${piezaActual.nombre}`;
+          piezaActual.marcadores = datos.marcadores || [];
+          piezaActual.vueltas = [];
+
+          (datos.vueltas || []).forEach(vData => {
+            const v = new Vuelta(vData.numero);
+            (vData.instrucciones || []).forEach(instData => {
+              if (instData.elementos) {
+                const g = new GrupoRepeticion(instData.repeticiones || 1);
+                instData.elementos.forEach(sub => {
+                  g.agregarElemento(new InstruccionPunto(sub.tipo_punto, sub.cantidad));
+                });
+                v.agregarInstruccion(g);
+              } else {
+                v.agregarInstruccion(new InstruccionPunto(instData.tipo_punto, instData.cantidad));
+              }
+            });
+            piezaActual.agregarVuelta(v);
+          });
+
+          actualizarVistaPatron();
+          mostrarToast("Patrón importado correctamente");
+        } catch (err) {
+          mostrarToast("Error al leer el archivo JSON");
+        }
+        fileInputJson.value = "";
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
