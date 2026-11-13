@@ -1,0 +1,110 @@
+{
+    "pieza": "Cabeza",
+    "marcadores": [],
+    "vueltas": [
+        {
+            "numero": 1,
+            "instrucciones": [
+                {
+                    "repeticiones": 1,
+                    "elementos": [
+                        {
+                            "tipo_punto": "Punto Bajo (pb)",
+                            "cantidad": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "numero": 2,
+            "instrucciones": [
+                {
+                    "tipo_punto": "Punto Doble Bajo",
+                    "cantidad": 6
+                }
+            ]
+        },
+        {
+            "numero": 3,
+            "instrucciones": [
+                {
+                    "repeticiones": 6,
+                    "elementos": [
+                        {
+                            "tipo_punto": "Punto Bajo (pb)",
+                            "cantidad": 1
+                        },
+                        {
+                            "tipo_punto": "Punto Doble Bajo",
+                            "cantidad": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "numero": 4,
+            "instrucciones": [
+                {
+                    "repeticiones": 6,
+                    "elementos": [
+                        {
+                            "tipo_punto": "Punto Bajo (pb)",
+                            "cantidad": 2
+                        },
+                        {
+                            "tipo_punto": "Punto Doble Bajo",
+                            "cantidad": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "numero": 5,
+            "instrucciones": [
+                {
+                    "repeticiones": 6,
+                    "elementos": [
+                        {
+                            "tipo_punto": "Punto Bajo (pb)",
+                            "cantidad": 2
+                        },
+                        {
+                            "tipo_punto": "Disminución (dism)",
+                            "cantidad": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "numero": 6,
+            "instrucciones": [
+                {
+                    "repeticiones": 6,
+                    "elementos": [
+                        {
+                            "tipo_punto": "Punto Bajo (pb)",
+                            "cantidad": 1
+                        },
+                        {
+                            "tipo_punto": "Disminución (dism)",
+                            "cantidad": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "numero": 7,
+            "instrucciones": [
+                {
+                    "tipo_punto": "Disminución (dism)",
+                    "cantidad": 6
+                }
+            ]
+        }
+    ]
+}
